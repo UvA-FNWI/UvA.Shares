@@ -4,22 +4,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using UvA.Utilities;
-using UvA.Utilities.Import;
 
 namespace UvA.Shares.Tool
 {
     class FileCrawler
     {
         string DeptName;
-
-        public void GetByDept(string dept)
-        {
-            DeptName = dept;
-            var rows = DataFileWrapper.LoadFirstSheet(@"C:\Users\Gerrit\UvA\Implementatie M365 FNWI - Documents\General\Analyses\shares_depts.xlsx");
-            var folders = rows.Where(r => r["Department"] == dept).Select(r => $@"P:\{r["Share"]}").ToArray();
-            GetFileNames(folders);
-        }
 
         IEnumerable<FileRecord> ProcessFolder(string folder)
         {

@@ -11,10 +11,4 @@
     <PackageReference Include="MongoDB.Driver" Version="2.11.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="UvA.Utilities">
-      <HintPath>..\..\DataNose\UvA.Utilities\bin\Debug\netstandard20\UvA.Utilities.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>
