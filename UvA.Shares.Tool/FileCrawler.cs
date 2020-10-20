@@ -31,7 +31,6 @@ namespace UvA.Shares.Tool
                 if ((count++ % 1000) == 0)
                     Console.WriteLine($"{folder}: {count}/{files.Length}");
                 var dir = Path.GetDirectoryName(f);
-                var parts = (dir.Substring(folder.Length) + @"\\\\\").Split('\\');
                 long length = 0;
                 DateTime? lastModified = null;
                 try
@@ -57,7 +56,7 @@ namespace UvA.Shares.Tool
         }
 
 
-        void GetFileNames(params string[] folders)
+        public void GetFileNames(params string[] folders)
         {
             var client = new MongoClient();
             var coll = client.GetDatabase("files").GetCollection<FileRecord>("files");
