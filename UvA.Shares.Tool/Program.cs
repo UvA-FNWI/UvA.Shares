@@ -9,7 +9,22 @@ namespace UvA.Shares.Tool
         static void Main(string[] args)
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-            new FileCrawler().GetFileNames(@"P:\test");
+
+            if (args.Length < 2)
+            {
+                Console.WriteLine("Specify an option and target folder");
+                return;
+            }
+
+            switch (args[0])
+            {
+                case "crawl":
+                    new FileCrawler().GetFileNames(args[1]);
+                    break;
+                case "report":
+                    new ReportGenerator().Generate(args[1]);
+                    break;
+            }
         }
     }
 }
