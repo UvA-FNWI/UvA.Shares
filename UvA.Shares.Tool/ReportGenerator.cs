@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using UvA.Utilities;
 
 namespace UvA.Shares.Tool
 {
@@ -24,6 +25,9 @@ namespace UvA.Shares.Tool
             var coll = client.GetDatabase("files").GetCollection<BsonDocument>("files");
 
             var steps = BsonDocument.Parse(@"{ steps: [
+{$match: {
+  ""DeptName"": '<TargetFolder>'
+}},
 {$addFields: {
   components: {
     $split: [
@@ -31,8 +35,6 @@ namespace UvA.Shares.Tool
       '\\'
     ]
   }
-}}, {$match: {
-  ""components.2"": '<TargetFolder>'
 }},{$group: {
   _id: {
     p1: '$Part1',
@@ -84,11 +86,20 @@ namespace UvA.Shares.Tool
       ]
     }
   }
-}}]}".Replace("<TargetFolder>", folder))["steps"].AsBsonArray;
+}}]}".Replace("<TargetFolder>", folder.Replace(@"\", @"\\")))["steps"].AsBsonArray;
             PipelineDefinition<BsonDocument, BsonDocument> pipeline = steps.Cast<BsonDocument>().ToArray();
 
             var resp = new BsonArray(coll.Aggregate(pipeline).ToEnumerable());
-            File.WriteAllText("out.json", resp.ToJson());
+            File.WriteAllText($@"out.json", resp.ToJson(new MongoDB.Bson.IO.JsonWriterSettings { OutputMode = MongoDB.Bson.IO.JsonOutputMode.RelaxedExtendedJson }));
+
+            GetLongPathNames(folder);
+        }
+
+        public void GetLongPathNames(string folder)
+        {
+            var client = new MongoClient();
+            var coll = client.GetDatabase("files").GetCollection<FileRecord>("files");
+            coll.Find(f => f.TooLong && f.DeptName == folder).ToEnumerable().SaveAsTabSeparated($@"C:\temp\toolong_{folder.Replace("\\", "_")}.tsv");
         }
     }
 }
